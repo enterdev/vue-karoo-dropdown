@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "sourceMap":                    false,
+    "target":                       "es5",
+    "newLine":                      "LF",
+    "moduleResolution":             "node",
+    "module":                       "ES2015",
+    "baseUrl":                      ".",
+    "strict":                       false,
+    "noEmitHelpers":                false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop":              true,
+    "experimentalDecorators":       true,
+
+    "outDir": "./dist/esm",
+    "rootDir": "./src",
+  }
+}

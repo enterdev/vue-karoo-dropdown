@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "sourceMap":                    false,
+    "target":                       "es5",
+    "newLine":                      "LF",
+    "moduleResolution":             "node",
+    "module":                       "CommonJS",
+    "baseUrl":                      ".",
+    "strict":                       false,
+    "noEmitHelpers":                false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop":              true,
+    "experimentalDecorators":       true,
+
+    "outDir": "./dist/cjs",
+    "rootDir": "./src",
+  }
+}

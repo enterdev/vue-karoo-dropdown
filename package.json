@@ -1,0 +1,41 @@
+{
+  "name": "vue-karoo-dropdown",
+  "version": "1.0.0",
+  "description": "Vue dropdown component",
+  "main": "dist/amd/vue-dropdown.js",
+  "dependencies": {
+    "vue": "^2.5.2",
+    "vue-class-component": "^7.1.0",
+    "vue-property-decorator": "^8.4.2"
+  },
+  "devDependencies": {
+    "vue": "^2.5.2"
+  },
+  "scripts": {
+    "build": "npm run build:amd",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
+    "build:amd": "tsc --project tsconfig.json"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/amd/vue-dropdown.js",
+      "require": "./dist/cjs/vue-dropdown.js"
+    }
+  },
+  "keywords": [
+    "dropdown",
+    "vue-component",
+    "vue"
+  ],
+  "author": "Enter.dev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enterdev/vue-karoo-dropdown.git"
+  },
+  "bugs": {
+    "url": "https://github.com/enterdev/vue-karoo-dropdown/issues"
+  },
+  "homepage": "https://github.com/enterdev/vue-karoo-dropdown#readme"
+}
