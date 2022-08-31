@@ -2,8 +2,8 @@
 
 ### Install
 ```bash
-npm install vue-karoo-dropdown
-yarn install vue-karoo-dropdown
+npm install @enterdev/vue-karoo-dropdown
+yarn add @enterdev/vue-karoo-dropdown
 ```
 
 ```js
@@ -12,12 +12,12 @@ import Vue from "vue";
 
 **ES6**
 ```js
-import vDropdown from "vue-karoo-dropdown";
+import vDropdown from "@enterdev/vue-karoo-dropdown";
 ```
 
 **CommonJS**
 ```js
-var vDropdown = require('vue-karoo-dropdown');
+var vDropdown = require('@enterdev/vue-karoo-dropdown');
 ```
 **Component setup**
 ```js
@@ -28,7 +28,13 @@ Vue.component("vue-dropdown", vDropdown);
 ``` html
 <vue-dropdown
     v-model="property"
-    v-bind:options="[{label: 'Canada', code: 'ca'},{label: 'Latvia', code: 'lv'}]"
+    v-bind:options="[
+        { label: 'Latvia', code: 'lv' },
+        { label: 'Lithuania', code: 'lt' },
+        { label: 'Estonia', code: 'ee' },
+        { label: 'Sweden', code: 'se' },
+        { label: 'Finland', code: 'fi' }
+    ]"
     v-bind:text-field="'label'"
     v-bind:value-field="'code'"
     v-bind:options-label="'Select'"/>
@@ -37,8 +43,11 @@ Vue.component("vue-dropdown", vDropdown);
 ### Styles: (must be added manually)
 
 ```js
-import "vue-select/dist/vue-dropdown.css";
+import "dist/vue-dropdown.css";
 ```
+
+### Demo
+[This is an external link to demo](https://codesandbox.io/s/youthful-currying-q3481s)
 
 ### License
 ```
