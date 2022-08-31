@@ -1,5 +1,5 @@
 {
-  "name": "vue-karoo-dropdown",
+  "name": "@enterdev/vue-karoo-dropdown",
   "version": "1.0.0",
   "description": "Vue dropdown component",
   "main": "dist/amd/vue-dropdown.js",
