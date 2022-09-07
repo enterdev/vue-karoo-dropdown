@@ -49,6 +49,7 @@ var VueDropdown = /** @class */ (function (_super) {
         _this.currentIndex = null;
         _this.currentElementId = null;
         _this.elementHeight = 0;
+        _this.selectHeight = 0;
         return _this;
     }
     VueDropdown.prototype.onOptionsChanged = function () {
@@ -60,6 +61,9 @@ var VueDropdown = /** @class */ (function (_super) {
         get: function () {
             var _this = this;
             this.filteredOptions = [];
+            this.$nextTick(function () {
+                _this.updateDropdownPosition();
+            });
             var regOption = new RegExp(this.searchInput, 'ig');
             this.newOptions.forEach(function (option) {
                 if (_this.searchInput.length < 1 ||
@@ -147,45 +151,45 @@ var VueDropdown = /** @class */ (function (_super) {
         else
             this.nonSearchableActions(e);
         if (e.keyCode === 38) // ArrowUp
-         {
+        {
             e.preventDefault();
             this.moveUp();
         }
         if (e.keyCode === 40) // ArrowDown
-         {
+        {
             e.preventDefault();
             this.moveDown();
         }
         if (e.keyCode === 27 && this.open) // Esc
-         {
+        {
             e.stopPropagation();
             this.exit();
         }
         if (e.keyCode === 32 && !this.open) // Space bar
-         {
+        {
             e.preventDefault();
             this.toggleDropdown();
         }
         if (e.keyCode == 35) //end
-         {
+        {
             e.preventDefault();
             this.selectedByArrow = true;
             this.selectOption(this.filteredOptions[this.filteredOptions.length - 1]);
         }
         if (e.keyCode == 36) //home
-         {
+        {
             e.preventDefault();
             this.selectedByArrow = true;
             this.selectOption(this.filteredOptions[0]);
         }
         if (e.keyCode === 33) // PageUp
-         {
+        {
             e.preventDefault();
             this.selectedByArrow = true;
             this.selectOption((_a = (this.filteredOptions[this.currentIndex - 3])) !== null && _a !== void 0 ? _a : this.filteredOptions[0]);
         }
         if (e.keyCode === 34) // PageDown
-         {
+        {
             e.preventDefault();
             this.selectedByArrow = true;
             this.selectOption((_b = (this.filteredOptions[this.currentIndex + 3])) !== null && _b !== void 0 ? _b : this.filteredOptions[this.filteredOptions.length - 1]);
@@ -194,7 +198,7 @@ var VueDropdown = /** @class */ (function (_super) {
     VueDropdown.prototype.nonSearchableActions = function (e) {
         var _this = this;
         if ((e.keyCode === 13 || e.keyCode === 9) && this.open) // Enter or Tab
-         {
+        {
             this.setOption(this.filteredOptions[this.currentIndex]);
             this.exit();
         }
@@ -245,7 +249,7 @@ var VueDropdown = /** @class */ (function (_super) {
             this.nonSearchableActions(e);
         }
         if (e.keyCode === 9 && this.open) // Tab
-         {
+        {
             if (this.selectedByArrow)
                 this.setOption(this.filteredOptions[this.currentIndex]);
             else if (this.selected != this.preSelected)
@@ -253,7 +257,7 @@ var VueDropdown = /** @class */ (function (_super) {
             this.exit();
         }
         if (e.keyCode === 13 && this.filteredOptions[0] && this.open) // Enter
-         {
+        {
             if (this.selectedByArrow)
                 this.setOption(this.filteredOptions[this.currentIndex]);
             else
@@ -321,6 +325,7 @@ var VueDropdown = /** @class */ (function (_super) {
         this.searchInput = '';
         var dropdown = this.$refs.dropdown;
         var pos = dropdown.getBoundingClientRect();
+        this.selectHeight = dropdown.clientHeight;
         this.$nextTick(function () {
             if (_this.searchable)
                 searchInputEl.focus();
@@ -356,9 +361,13 @@ var VueDropdown = /** @class */ (function (_super) {
         dropdownBox.remove();
     };
     VueDropdown.prototype.updateDropdownPosition = function () {
+        var dropdownBox = this.$refs.dropdownBox;
+        if (!dropdownBox)
+            return;
         var el = document.getElementById(this.currentElementId);
         var dropdown = this.$refs.dropdown;
         var pos = dropdown.getBoundingClientRect();
+        this.elementHeight = dropdownBox.clientHeight;
         var scrollY = window.scrollY || window.pageYOffset;
         var scrollX = window.scrollX || window.pageXOffset;
         el.style.top = this.isBottom(pos) ?
@@ -368,8 +377,6 @@ var VueDropdown = /** @class */ (function (_super) {
             el.style.minWidth = pos.width + "px";
         else
             el.style.width = pos.width + "px";
-        if (!this.isInViewport(el) && !this.isMobile())
-            this.exit();
     };
     VueDropdown.prototype.updateIndex = function () {
         var _this = this;
@@ -396,12 +403,19 @@ var VueDropdown = /** @class */ (function (_super) {
         var dropdownList = this.$refs.dropdownList;
         return dropdownList ? dropdownList.getBoundingClientRect() : { height: 0, top: 0, bottom: 0 };
     };
+    VueDropdown.prototype.scrollOutside = function () {
+        var _this = this;
+        this.updateDropdownPosition();
+        this.$nextTick(function () {
+            var el = document.getElementById(_this.currentElementId);
+            if (!_this.isInViewport(el) && !_this.isMobile())
+                _this.exit();
+        });
+    };
     VueDropdown.prototype.isInViewport = function (el) {
         var rect = el.getBoundingClientRect();
-        return (rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth));
+        return !(((rect.top + el.clientHeight + this.selectHeight) < 0) ||
+            (rect.top - this.selectHeight) > window.innerHeight);
     };
     VueDropdown.prototype.isMobile = function () {
         return screen.width < this.mobileScreen;
@@ -475,7 +489,7 @@ var VueDropdown = /** @class */ (function (_super) {
                     },
                 },
             },
-            template: "\n        <div class=\"dropdown\" v-mousedown-outside=\"exit\" v-if=\"options\" ref=\"dropdown\">\n\n            <div v-if=\"searchable\" ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n                v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                <span v-show=\"!open\">\n                    <slot name=\"selected-item\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                </span>\n    \n                <input type=\"search\" ref=\"searchInput\" v-show=\"open\" class=\"dropdown-input\"\n                    v-bind:value=\"searchInput\"\n                    v-bind:placeholder=\"placeholder\"\n                    v-on:input=\"e => searchInput = e.target.value\">\n            </div>\n    \n            <div v-else ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n                v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                    <span>\n                        <slot name=\"selected-item\" ref=\"searchInput\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                    </span>\n            </div>\n    \n            <div data-mousedown-prevent class=\"dropdown-box\" ref=\"dropdownBox\" v-if=\"open\"\n                v-scroll-outside=\"updateDropdownPosition\">\n    \n                <div data-mousedown-prevent ref=\"dropdownList\" class=\"dropdown-content\" v-bind:class=\"itemSize\">\n                    <div data-mousedown-prevent class=\"dropdown-item\"\n                        v-on:mousedown=\"selectByClick(option, $event)\"\n                        v-for=\"(option, index) in getFilteredOptions\"\n                        v-bind:class=\"{ active: preSelected.id === option.id, folder: option.isParent }\"\n                        v-bind:key=\"index\">\n                        <slot name=\"list-item\" v-bind:option=\"option\" v-if=\"option.id\">\n                            <span v-for=\"n in option.level\">&nbsp;&nbsp;</span>\n                            {{ option.name }}\n                        </slot>\n                        <span v-else>{{ option.name }}</span>\n                    </div>\n                </div>\n            </div>\n\n        </div>\n    "
+            template: "\n      <div class=\"dropdown\" v-mousedown-outside=\"exit\" v-if=\"options\" ref=\"dropdown\">\n\n      <div v-if=\"searchable\" ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n          v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                <span v-show=\"!open\">\n                    <slot name=\"selected-item\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                </span>\n\n        <input type=\"search\" ref=\"searchInput\" v-show=\"open\" class=\"dropdown-input\"\n            v-bind:value=\"searchInput\"\n            v-bind:placeholder=\"placeholder\"\n            v-on:input=\"e => searchInput = e.target.value\">\n      </div>\n\n      <div v-else ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n          v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                    <span>\n                        <slot name=\"selected-item\" ref=\"searchInput\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                    </span>\n      </div>\n\n      <div data-mousedown-prevent class=\"dropdown-box\" ref=\"dropdownBox\" v-if=\"open\"\n          v-scroll-outside=\"scrollOutside\">\n\n        <div data-mousedown-prevent ref=\"dropdownList\" class=\"dropdown-content\" v-bind:class=\"itemSize\">\n          <div data-mousedown-prevent class=\"dropdown-item\"\n              v-on:mousedown=\"selectByClick(option, $event)\"\n              v-for=\"(option, index) in getFilteredOptions\"\n              v-bind:class=\"{ active: preSelected.id === option.id, folder: option.isParent }\"\n              v-bind:key=\"index\">\n            <slot name=\"list-item\" v-bind:option=\"option\" v-if=\"option.id\">\n              <span v-for=\"n in option.level\">&nbsp;&nbsp;</span>\n              {{ option.name }}\n            </slot>\n            <span v-else>{{ option.name }}</span>\n          </div>\n        </div>\n      </div>\n\n      </div>\n    "
         })
     ], VueDropdown);
     return VueDropdown;

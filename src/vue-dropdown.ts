@@ -62,7 +62,7 @@ export enum ItemSizeClass {
             </div>
     
             <div data-mousedown-prevent class="dropdown-box" ref="dropdownBox" v-if="open"
-                v-scroll-outside="updateDropdownPosition">
+                v-scroll-outside="scrollOutside">
     
                 <div data-mousedown-prevent ref="dropdownList" class="dropdown-content" v-bind:class="itemSize">
                     <div data-mousedown-prevent class="dropdown-item"
@@ -106,6 +106,10 @@ export default class VueDropdown extends Vue
     get getFilteredOptions()
     {
         this.filteredOptions = [];
+
+        this.$nextTick(() => {
+            this.updateDropdownPosition();
+        });
 
         const regOption = new RegExp(this.searchInput, 'ig');
 
@@ -167,6 +171,7 @@ export default class VueDropdown extends Vue
     currentIndex: number        = null;
     currentElementId: string    = null;
     elementHeight: number       = 0;
+    selectHeight: number        = 0;
 
     created()
     {
@@ -496,6 +501,8 @@ export default class VueDropdown extends Vue
         let dropdown  = this.$refs.dropdown as HTMLElement;
         let pos       = dropdown.getBoundingClientRect();
 
+        this.selectHeight = dropdown.clientHeight;
+
         this.$nextTick(() =>
         {
             if (this.searchable)
@@ -550,9 +557,14 @@ export default class VueDropdown extends Vue
 
     updateDropdownPosition()
     {
-        let el       = document.getElementById(this.currentElementId);
-        let dropdown = this.$refs.dropdown as HTMLElement;
-        let pos      = dropdown.getBoundingClientRect();
+        let dropdownBox = this.$refs.dropdownBox as HTMLElement;
+        if (!dropdownBox)
+            return;
+
+        let el             = document.getElementById(this.currentElementId);
+        let dropdown       = this.$refs.dropdown as HTMLElement;
+        let pos            = dropdown.getBoundingClientRect();
+        this.elementHeight = dropdownBox.clientHeight;
 
         let scrollY = window.scrollY || window.pageYOffset;
         let scrollX = window.scrollX || window.pageXOffset;
@@ -565,9 +577,6 @@ export default class VueDropdown extends Vue
             el.style.minWidth = pos.width + "px";
         else
             el.style.width = pos.width + "px";
-
-        if (!this.isInViewport(el) && !this.isMobile())
-            this.exit();
     }
 
     updateIndex()
@@ -607,14 +616,25 @@ export default class VueDropdown extends Vue
         return dropdownList ? dropdownList.getBoundingClientRect() : {height: 0, top: 0, bottom: 0};
     }
 
+    scrollOutside()
+    {
+        this.updateDropdownPosition();
+
+        this.$nextTick(() => {
+            let el = document.getElementById(this.currentElementId);
+
+            if (!this.isInViewport(el) && !this.isMobile())
+                this.exit();
+        });
+    }
+
     isInViewport(el)
     {
         const rect = el.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+
+        return !(
+            ((rect.top + el.clientHeight + this.selectHeight) < 0) ||
+            (rect.top - this.selectHeight) > window.innerHeight
         );
     }
 
