@@ -40,7 +40,7 @@ export enum ItemSizeClass {
         },
     },
     template: `
-        <div class="dropdown" v-mousedown-outside="exit" v-if="options" ref="dropdown">
+        <div class="dropdown" v-bind:class="{open: open}" v-mousedown-outside="exit" v-if="options" ref="dropdown">
 
             <div v-if="searchable" ref="dropdownLabel" v-bind:tabindex="0" class="dropdown-label"
                 v-on:click="toggleDropdown($event)" v-on:keydown="keyActions">
@@ -62,6 +62,7 @@ export enum ItemSizeClass {
             </div>
     
             <div data-mousedown-prevent class="dropdown-box" ref="dropdownBox" v-if="open"
+                v-bind:class="{bottom: isDropdownBottom}"
                 v-scroll-outside="scrollOutside">
     
                 <div data-mousedown-prevent ref="dropdownList" class="dropdown-content" v-bind:class="itemSize">
@@ -172,6 +173,7 @@ export default class VueDropdown extends Vue
     currentElementId: string    = null;
     elementHeight: number       = 0;
     selectHeight: number        = 0;
+    isDropdownBottom: boolean   = false;
 
     created()
     {
@@ -185,6 +187,10 @@ export default class VueDropdown extends Vue
 
     selectByClick(option, event)
     {
+        // Disable wheel click
+        if (event.which == 2)
+            return;
+
         if (event)
             event.preventDefault();
 
@@ -577,6 +583,8 @@ export default class VueDropdown extends Vue
             el.style.minWidth = pos.width + "px";
         else
             el.style.width = pos.width + "px";
+
+        this.adjustScroll();
     }
 
     updateIndex()
@@ -645,7 +653,8 @@ export default class VueDropdown extends Vue
 
     isBottom(pos)
     {
-        return window.innerHeight - this.elementHeight < pos.bottom;
+        this.isDropdownBottom = window.innerHeight - this.elementHeight < pos.bottom;
+        return this.isDropdownBottom;
     }
 
     reset()
