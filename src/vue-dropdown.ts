@@ -40,7 +40,7 @@ export enum ItemSizeClass {
         },
     },
     template: `
-        <div class="dropdown" v-bind:class="{open: open}" v-mousedown-outside="exit" v-if="options" ref="dropdown">
+        <div class="dropdown" v-bind:class="{open: open, bottom: isDropdownBottom}" v-mousedown-outside="exit" v-if="options" ref="dropdown">
 
             <div v-if="searchable" ref="dropdownLabel" v-bind:tabindex="0" class="dropdown-label"
                 v-on:click="toggleDropdown($event)" v-on:keydown="keyActions">

@@ -50,6 +50,7 @@ var VueDropdown = /** @class */ (function (_super) {
         _this.currentElementId = null;
         _this.elementHeight = 0;
         _this.selectHeight = 0;
+        _this.isDropdownBottom = false;
         return _this;
     }
     VueDropdown.prototype.onOptionsChanged = function () {
@@ -92,6 +93,9 @@ var VueDropdown = /** @class */ (function (_super) {
         this.setOption(this.getSelectedOption());
     };
     VueDropdown.prototype.selectByClick = function (option, event) {
+        // Disable wheel click
+        if (event.which == 2)
+            return;
         if (event)
             event.preventDefault();
         this.setOption(option);
@@ -377,6 +381,7 @@ var VueDropdown = /** @class */ (function (_super) {
             el.style.minWidth = pos.width + "px";
         else
             el.style.width = pos.width + "px";
+        this.adjustScroll();
     };
     VueDropdown.prototype.updateIndex = function () {
         var _this = this;
@@ -421,7 +426,8 @@ var VueDropdown = /** @class */ (function (_super) {
         return screen.width < this.mobileScreen;
     };
     VueDropdown.prototype.isBottom = function (pos) {
-        return window.innerHeight - this.elementHeight < pos.bottom;
+        this.isDropdownBottom = window.innerHeight - this.elementHeight < pos.bottom;
+        return this.isDropdownBottom;
     };
     VueDropdown.prototype.reset = function () {
         this.selected = {};
@@ -489,7 +495,7 @@ var VueDropdown = /** @class */ (function (_super) {
                     },
                 },
             },
-            template: "\n      <div class=\"dropdown\" v-mousedown-outside=\"exit\" v-if=\"options\" ref=\"dropdown\">\n\n      <div v-if=\"searchable\" ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n          v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                <span v-show=\"!open\">\n                    <slot name=\"selected-item\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                </span>\n\n        <input type=\"search\" ref=\"searchInput\" v-show=\"open\" class=\"dropdown-input\"\n            v-bind:value=\"searchInput\"\n            v-bind:placeholder=\"placeholder\"\n            v-on:input=\"e => searchInput = e.target.value\">\n      </div>\n\n      <div v-else ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n          v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                    <span>\n                        <slot name=\"selected-item\" ref=\"searchInput\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                    </span>\n      </div>\n\n      <div data-mousedown-prevent class=\"dropdown-box\" ref=\"dropdownBox\" v-if=\"open\"\n          v-scroll-outside=\"scrollOutside\">\n\n        <div data-mousedown-prevent ref=\"dropdownList\" class=\"dropdown-content\" v-bind:class=\"itemSize\">\n          <div data-mousedown-prevent class=\"dropdown-item\"\n              v-on:mousedown=\"selectByClick(option, $event)\"\n              v-for=\"(option, index) in getFilteredOptions\"\n              v-bind:class=\"{ active: preSelected.id === option.id, folder: option.isParent }\"\n              v-bind:key=\"index\">\n            <slot name=\"list-item\" v-bind:option=\"option\" v-if=\"option.id\">\n              <span v-for=\"n in option.level\">&nbsp;&nbsp;</span>\n              {{ option.name }}\n            </slot>\n            <span v-else>{{ option.name }}</span>\n          </div>\n        </div>\n      </div>\n\n      </div>\n    "
+            template: "\n        <div class=\"dropdown\" v-bind:class=\"{open: open, bottom: isDropdownBottom}\" v-mousedown-outside=\"exit\" v-if=\"options\" ref=\"dropdown\">\n\n        <div v-if=\"searchable\" ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n            v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                <span v-show=\"!open\">\n                    <slot name=\"selected-item\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                </span>\n\n            <input type=\"search\" ref=\"searchInput\" v-show=\"open\" class=\"dropdown-input\"\n                v-bind:value=\"searchInput\"\n                v-bind:placeholder=\"placeholder\"\n                v-on:input=\"e => searchInput = e.target.value\">\n        </div>\n\n        <div v-else ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n            v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                    <span>\n                        <slot name=\"selected-item\" ref=\"searchInput\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                    </span>\n        </div>\n\n        <div data-mousedown-prevent class=\"dropdown-box\" ref=\"dropdownBox\" v-if=\"open\"\n            v-bind:class=\"{bottom: isDropdownBottom}\"\n            v-scroll-outside=\"scrollOutside\">\n\n            <div data-mousedown-prevent ref=\"dropdownList\" class=\"dropdown-content\" v-bind:class=\"itemSize\">\n                <div data-mousedown-prevent class=\"dropdown-item\"\n                    v-on:mousedown=\"selectByClick(option, $event)\"\n                    v-for=\"(option, index) in getFilteredOptions\"\n                    v-bind:class=\"{ active: preSelected.id === option.id, folder: option.isParent }\"\n                    v-bind:key=\"index\">\n                    <slot name=\"list-item\" v-bind:option=\"option\" v-if=\"option.id\">\n                        <span v-for=\"n in option.level\">&nbsp;&nbsp;</span>\n                        {{ option.name }}\n                    </slot>\n                    <span v-else>{{ option.name }}</span>\n                </div>\n            </div>\n        </div>\n\n        </div>\n    "
         })
     ], VueDropdown);
     return VueDropdown;
