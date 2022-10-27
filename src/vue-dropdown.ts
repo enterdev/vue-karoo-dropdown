@@ -139,7 +139,8 @@ export default class VueDropdown extends Vue
     nothingFoundText = {
         'lv': 'Nav atrasts',
         'ru': 'Ничего не найдено',
-        'en': 'Nothing found'
+        'en': 'Nothing found',
+        'lt': 'Nieko nerasta'
     };
 
     @Prop({default: 'name'})
