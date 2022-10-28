@@ -34,7 +34,8 @@ var VueDropdown = /** @class */ (function (_super) {
             'lv': 'Nav atrasts',
             'ru': 'Ничего не найдено',
             'en': 'Nothing found',
-            'lt': 'Nieko nerasta'
+            'lt': 'Nieko nerasta',
+            'ee': 'Ei leitud midagi'
         };
         _this.levelField = 'level';
         _this.isParentField = 'isParent';
