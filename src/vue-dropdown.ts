@@ -141,7 +141,7 @@ export default class VueDropdown extends Vue
         'ru': 'Ничего не найдено',
         'en': 'Nothing found',
         'lt': 'Nieko nerasta',
-        'ee': 'Ei leitud midagi'
+        'et': 'Ei leitud midagi'
     };
 
     @Prop({default: 'name'})

@@ -38,7 +38,7 @@ define(["require", "exports", "vue-property-decorator"], function (require, expo
                 'ru': 'Ничего не найдено',
                 'en': 'Nothing found',
                 'lt': 'Nieko nerasta',
-                'ee': 'Ei leitud midagi'
+                'et': 'Ei leitud midagi'
             };
             _this.levelField = 'level';
             _this.isParentField = 'isParent';
