@@ -47,24 +47,24 @@ export enum ItemSizeClass {
                 <span v-show="!open">
                     <slot name="selected-item" v-bind:selected="selected">{{ selected.name }}</slot>
                 </span>
-    
+
                 <input type="search" ref="searchInput" v-show="open" class="dropdown-input"
                     v-bind:value="searchInput"
                     v-bind:placeholder="placeholder"
                     v-on:input="e => searchInput = e.target.value">
             </div>
-    
+
             <div v-else ref="dropdownLabel" v-bind:tabindex="0" class="dropdown-label"
                 v-on:click="toggleDropdown($event)" v-on:keydown="keyActions">
                     <span>
                         <slot name="selected-item" ref="searchInput" v-bind:selected="selected">{{ selected.name }}</slot>
                     </span>
             </div>
-    
+
             <div data-mousedown-prevent class="dropdown-box" ref="dropdownBox" v-if="open"
                 v-bind:class="{bottom: isDropdownBottom}"
                 v-scroll-outside="scrollOutside">
-    
+
                 <div data-mousedown-prevent ref="dropdownList" class="dropdown-content" v-bind:class="itemSize">
                     <div data-mousedown-prevent class="dropdown-item"
                         v-on:mousedown="selectByClick(option, $event)"
@@ -139,7 +139,9 @@ export default class VueDropdown extends Vue
     nothingFoundText = {
         'lv': 'Nav atrasts',
         'ru': 'Ничего не найдено',
-        'en': 'Nothing found'
+        'en': 'Nothing found',
+        'lt': 'Nieko nerasta',
+        'et': 'Ei leitud midagi'
     };
 
     @Prop({default: 'name'})
@@ -270,52 +272,60 @@ export default class VueDropdown extends Vue
         else
             this.nonSearchableActions(e);
 
-        if (e.keyCode === 38) // ArrowUp
+        // ArrowUp
+        if (e.keyCode === 38)
         {
             e.preventDefault()
             this.moveUp();
         }
 
-        if (e.keyCode === 40) // ArrowDown
+        // ArrowDown
+        if (e.keyCode === 40)
         {
             e.preventDefault()
             this.moveDown();
         }
 
-        if (e.keyCode === 27 && this.open) // Esc
+        // Esc
+        if (e.keyCode === 27 && this.open)
         {
             e.stopPropagation();
             this.exit();
         }
 
-        if (e.keyCode === 32 && !this.open) // Space bar
+        // Space bar
+        if (e.keyCode === 32 && !this.open)
         {
             e.preventDefault();
             this.toggleDropdown();
         }
 
-        if (e.keyCode == 35) //end
+        // end
+        if (e.keyCode == 35)
         {
             e.preventDefault();
             this.selectedByArrow = true;
             this.selectOption(this.filteredOptions[this.filteredOptions.length - 1])
         }
 
-        if (e.keyCode == 36) //home
+        //home
+        if (e.keyCode == 36)
         {
             e.preventDefault();
             this.selectedByArrow = true;
             this.selectOption(this.filteredOptions[0])
         }
 
-        if (e.keyCode === 33) // PageUp
+        // PageUp
+        if (e.keyCode === 33)
         {
             e.preventDefault()
             this.selectedByArrow = true;
             this.selectOption((this.filteredOptions[this.currentIndex - 3]) ?? this.filteredOptions[0])
         }
 
-        if (e.keyCode === 34) // PageDown
+        // PageDown
+        if (e.keyCode === 34)
         {
             e.preventDefault()
             this.selectedByArrow = true;
@@ -326,7 +336,8 @@ export default class VueDropdown extends Vue
 
     nonSearchableActions(e)
     {
-        if ((e.keyCode === 13 || e.keyCode === 9) && this.open) // Enter or Tab
+        // Enter or Tab
+        if ((e.keyCode === 13 || e.keyCode === 9) && this.open)
         {
             this.setOption(this.filteredOptions[this.currentIndex]);
             this.exit();
@@ -401,7 +412,8 @@ export default class VueDropdown extends Vue
             this.nonSearchableActions(e);
         }
 
-        if (e.keyCode === 9 && this.open) // Tab
+        // Tab
+        if (e.keyCode === 9 && this.open)
         {
             if (this.selectedByArrow)
                 this.setOption(this.filteredOptions[this.currentIndex]);
@@ -411,7 +423,8 @@ export default class VueDropdown extends Vue
             this.exit();
         }
 
-        if (e.keyCode === 13 && this.filteredOptions[0] && this.open) // Enter
+        // Enter
+        if (e.keyCode === 13 && this.filteredOptions[0] && this.open)
         {
             if (this.selectedByArrow)
                 this.setOption(this.filteredOptions[this.currentIndex]);
