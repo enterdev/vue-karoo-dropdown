@@ -565,7 +565,8 @@ export default class VueDropdown extends Vue
         this.searchInput = '';
         this.open        = false;
 
-        this.$emit('input', this.selected.id);
+        if (this.selected && typeof this.selected.id !== 'undefined')
+            this.$emit('input', this.selected.id);
 
         let dropdownBox   = this.$refs.dropdownBox as HTMLElement;
         let dropdownLabel = this.$refs.dropdownLabel as HTMLElement;
