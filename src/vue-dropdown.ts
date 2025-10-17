@@ -75,7 +75,7 @@ export enum ItemSizeClass {
                             <span v-for="n in option.level">&nbsp;&nbsp;</span>
                             {{ option.name }}
                         </slot>
-                        <span v-else>{{ option.name }}</span>
+                        <span v-else data-mousedown-prevent>{{ option.name }}</span>
                     </div>
                 </div>
             </div>
