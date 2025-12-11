@@ -28,7 +28,7 @@ define(["require", "exports", "vue-property-decorator"], function (require, expo
         ItemSizeClass["FullWidth"] = "full-width";
         ItemSizeClass["LineBreak"] = "line-break";
         ItemSizeClass["Ellipsis"] = "ellipsis";
-    })(ItemSizeClass = exports.ItemSizeClass || (exports.ItemSizeClass = {}));
+    })(ItemSizeClass || (exports.ItemSizeClass = ItemSizeClass = {}));
     var VueDropdown = /** @class */ (function (_super) {
         __extends(VueDropdown, _super);
         function VueDropdown() {
@@ -363,7 +363,8 @@ define(["require", "exports", "vue-property-decorator"], function (require, expo
                 return;
             this.searchInput = '';
             this.open = false;
-            this.$emit('input', this.selected.id);
+            if (this.selected && typeof this.selected.id !== 'undefined')
+                this.$emit('input', this.selected.id);
             var dropdownBox = this.$refs.dropdownBox;
             var dropdownLabel = this.$refs.dropdownLabel;
             dropdownLabel.focus();
@@ -445,35 +446,35 @@ define(["require", "exports", "vue-property-decorator"], function (require, expo
             return JSON.parse(JSON.stringify(initialObject, replacer));
         };
         __decorate([
-            vue_property_decorator_1.Model("input")
+            (0, vue_property_decorator_1.Model)("input")
         ], VueDropdown.prototype, "id", void 0);
         __decorate([
-            vue_property_decorator_1.Prop({ default: ItemSizeClass.FullWidth })
+            (0, vue_property_decorator_1.Prop)({ default: ItemSizeClass.FullWidth })
         ], VueDropdown.prototype, "itemSize", void 0);
         __decorate([
-            vue_property_decorator_1.Prop({ default: [] })
+            (0, vue_property_decorator_1.Prop)({ default: [] })
         ], VueDropdown.prototype, "options", void 0);
         __decorate([
-            vue_property_decorator_1.Watch('id', { immediate: true, deep: true }),
-            vue_property_decorator_1.Watch('options', { immediate: true, deep: true })
+            (0, vue_property_decorator_1.Watch)('id', { immediate: true, deep: true }),
+            (0, vue_property_decorator_1.Watch)('options', { immediate: true, deep: true })
         ], VueDropdown.prototype, "onOptionsChanged", null);
         __decorate([
-            vue_property_decorator_1.Prop({ default: 'name' })
+            (0, vue_property_decorator_1.Prop)({ default: 'name' })
         ], VueDropdown.prototype, "textField", void 0);
         __decorate([
-            vue_property_decorator_1.Prop({ default: 'id' })
+            (0, vue_property_decorator_1.Prop)({ default: 'id' })
         ], VueDropdown.prototype, "valueField", void 0);
         __decorate([
-            vue_property_decorator_1.Prop([String])
+            (0, vue_property_decorator_1.Prop)([String])
         ], VueDropdown.prototype, "valueSearchHint", void 0);
         __decorate([
-            vue_property_decorator_1.Prop({ default: true })
+            (0, vue_property_decorator_1.Prop)({ default: true })
         ], VueDropdown.prototype, "searchable", void 0);
         __decorate([
-            vue_property_decorator_1.Prop({ default: 'en' })
+            (0, vue_property_decorator_1.Prop)({ default: 'en' })
         ], VueDropdown.prototype, "languageField", void 0);
         VueDropdown = __decorate([
-            vue_property_decorator_1.Component({
+            (0, vue_property_decorator_1.Component)({
                 directives: {
                     'scroll-outside': {
                         inserted: function (el, binding) {
@@ -500,7 +501,7 @@ define(["require", "exports", "vue-property-decorator"], function (require, expo
                         },
                     },
                 },
-                template: "\n        <div class=\"dropdown\" v-bind:class=\"{open: open, bottom: isDropdownBottom}\" v-mousedown-outside=\"exit\" v-if=\"options\" ref=\"dropdown\">\n\n            <div v-if=\"searchable\" ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n                v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                <span v-show=\"!open\">\n                    <slot name=\"selected-item\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                </span>\n\n                <input type=\"search\" ref=\"searchInput\" v-show=\"open\" class=\"dropdown-input\"\n                    v-bind:value=\"searchInput\"\n                    v-bind:placeholder=\"placeholder\"\n                    v-on:input=\"e => searchInput = e.target.value\">\n            </div>\n\n            <div v-else ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n                v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                    <span>\n                        <slot name=\"selected-item\" ref=\"searchInput\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                    </span>\n            </div>\n\n            <div data-mousedown-prevent class=\"dropdown-box\" ref=\"dropdownBox\" v-if=\"open\"\n                v-bind:class=\"{bottom: isDropdownBottom}\"\n                v-scroll-outside=\"scrollOutside\">\n\n                <div data-mousedown-prevent ref=\"dropdownList\" class=\"dropdown-content\" v-bind:class=\"itemSize\">\n                    <div data-mousedown-prevent class=\"dropdown-item\"\n                        v-on:mousedown=\"selectByClick(option, $event)\"\n                        v-for=\"(option, index) in getFilteredOptions\"\n                        v-bind:class=\"{ active: preSelected.id === option.id, folder: option.isParent }\"\n                        v-bind:key=\"index\">\n                        <slot name=\"list-item\" v-bind:option=\"option\" v-if=\"option.id\">\n                            <span v-for=\"n in option.level\">&nbsp;&nbsp;</span>\n                            {{ option.name }}\n                        </slot>\n                        <span v-else>{{ option.name }}</span>\n                    </div>\n                </div>\n            </div>\n\n        </div>\n    "
+                template: "\n        <div class=\"dropdown\" v-bind:class=\"{open: open, bottom: isDropdownBottom}\" v-mousedown-outside=\"exit\" v-if=\"options\" ref=\"dropdown\">\n\n            <div v-if=\"searchable\" ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n                v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                <span v-show=\"!open\">\n                    <slot name=\"selected-item\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                </span>\n\n                <input type=\"search\" ref=\"searchInput\" v-show=\"open\" class=\"dropdown-input\"\n                    v-bind:value=\"searchInput\"\n                    v-bind:placeholder=\"placeholder\"\n                    v-on:input=\"e => searchInput = e.target.value\">\n            </div>\n\n            <div v-else ref=\"dropdownLabel\" v-bind:tabindex=\"0\" class=\"dropdown-label\"\n                v-on:click=\"toggleDropdown($event)\" v-on:keydown=\"keyActions\">\n                    <span>\n                        <slot name=\"selected-item\" ref=\"searchInput\" v-bind:selected=\"selected\">{{ selected.name }}</slot>\n                    </span>\n            </div>\n\n            <div data-mousedown-prevent class=\"dropdown-box\" ref=\"dropdownBox\" v-if=\"open\"\n                v-bind:class=\"{bottom: isDropdownBottom}\"\n                v-scroll-outside=\"scrollOutside\">\n\n                <div data-mousedown-prevent ref=\"dropdownList\" class=\"dropdown-content\" v-bind:class=\"itemSize\">\n                    <div data-mousedown-prevent class=\"dropdown-item\"\n                        v-on:mousedown=\"selectByClick(option, $event)\"\n                        v-for=\"(option, index) in getFilteredOptions\"\n                        v-bind:class=\"{ active: preSelected.id === option.id, folder: option.isParent }\"\n                        v-bind:key=\"index\">\n                        <slot name=\"list-item\" v-bind:option=\"option\" v-if=\"option.id\">\n                            <span v-for=\"n in option.level\">&nbsp;&nbsp;</span>\n                            {{ option.name }}\n                        </slot>\n                        <span v-else data-mousedown-prevent>{{ option.name }}</span>\n                    </div>\n                </div>\n            </div>\n\n        </div>\n    "
             })
         ], VueDropdown);
         return VueDropdown;
